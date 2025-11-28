@@ -45,7 +45,9 @@ export const authOptions: AuthOptions = {
             }
             return session;
         }
-    }
+    },
+    trustHost: true,
+    debug: true,
 };
 
 const handler = NextAuth(authOptions);
