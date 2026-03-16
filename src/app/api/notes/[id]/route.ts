@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
-import { authOptions } from "../../auth/[...nextauth]/route"
+import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 export async function PUT(
@@ -26,7 +26,7 @@ export async function PUT(
             return NextResponse.json({ message: "Note not found" }, { status: 404 })
         }
 
-        // @ts-ignore
+        // @ts-expect-error session.user is typed generically
         if (existingNote.userId !== session.user.id) {
             return NextResponse.json({ message: "Forbidden" }, { status: 403 })
         }
@@ -40,7 +40,7 @@ export async function PUT(
         })
 
         return NextResponse.json(note)
-    } catch (error) {
+    } catch {
         return NextResponse.json({ message: "Something went wrong" }, { status: 500 })
     }
 }
@@ -67,7 +67,7 @@ export async function DELETE(
             return NextResponse.json({ message: "Note not found" }, { status: 404 })
         }
 
-        // @ts-ignore
+        // @ts-expect-error session.user is typed generically
         if (existingNote.userId !== session.user.id) {
             return NextResponse.json({ message: "Forbidden" }, { status: 403 })
         }
@@ -77,7 +77,7 @@ export async function DELETE(
         })
 
         return NextResponse.json({ message: "Note deleted" })
-    } catch (error) {
+    } catch {
         return NextResponse.json({ message: "Something went wrong" }, { status: 500 })
     }
 }

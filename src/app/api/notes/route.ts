@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
-import { authOptions } from "../auth/[...nextauth]/route"
+import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(req: Request) {
@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     try {
         const notes = await prisma.note.findMany({
             where: {
-                // @ts-ignore
+                // @ts-expect-error session.user is typed generically
                 userId: session.user.id,
                 OR: [
                     { title: { contains: search } }, // removed mode: 'insensitive' for sqlite compatibility if needed, but prisma sqlite supports it? No, sqlite contains is case-insensitive by default only for ASCII?
@@ -29,7 +29,7 @@ export async function GET(req: Request) {
         })
 
         return NextResponse.json(notes)
-    } catch (error) {
+    } catch {
         return NextResponse.json({ message: "Something went wrong" }, { status: 500 })
     }
 }
@@ -48,13 +48,13 @@ export async function POST(req: Request) {
             data: {
                 title,
                 content,
-                // @ts-ignore
+                // @ts-expect-error session.user is typed generically
                 userId: session.user.id,
             },
         })
 
         return NextResponse.json(note, { status: 201 })
-    } catch (error) {
+    } catch {
         return NextResponse.json({ message: "Something went wrong" }, { status: 500 })
     }
 }

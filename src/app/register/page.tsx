@@ -33,7 +33,7 @@ export default function RegisterPage() {
                 const data = await res.json()
                 setError(data.message)
             }
-        } catch (err) {
+        } catch {
             setError("Something went wrong")
         }
     }
